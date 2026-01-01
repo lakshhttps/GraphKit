@@ -6,10 +6,10 @@ It is designed for clarity, performance, and ease of use, making it suitable for
 ---
 
 ## ✨ Features
-- Adjacency list & matrix representations
-- Breadth First Search (BFS)
-- Depth First Search (DFS)
-- Shortest path algorithms (coming soon)
+- Traversal algorithms
+- Shortest path algorithms
+- Cycle detection
+- Indegree, Outdegree and more
 - Clean and extensible API
 
 ---
