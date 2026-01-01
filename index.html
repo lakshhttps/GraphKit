@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphKit - Modern C++ Graph Library</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(to bottom, #0f172a, #1e293b);
+            color: #e2e8f0;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #2dd4bf 0%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .sidebar {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-item {
+            transition: all 0.2s ease;
+            border-left: 2px solid transparent;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: rgba(45, 212, 191, 0.1);
+            border-left-color: #2dd4bf;
+            color: #2dd4bf;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(45, 212, 191, 0.3);
+            box-shadow: 0 20px 40px rgba(45, 212, 191, 0.1);
+        }
+        
+        .code-window {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .code-header {
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%);
+            transition: all 0.3s ease;
+            color: #0f172a;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(45, 212, 191, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .badge {
+            background: rgba(45, 212, 191, 0.1);
+            border: 1px solid rgba(45, 212, 191, 0.3);
+            color: #2dd4bf;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        th {
+            background: rgba(45, 212, 191, 0.1);
+            color: #2dd4bf;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 2px solid rgba(45, 212, 191, 0.3);
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        code:not([class*="language-"]) {
+            background: rgba(45, 212, 191, 0.1);
+            color: #2dd4bf;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.875em;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(45, 212, 191, 0.2);
+            border: 1px solid rgba(45, 212, 191, 0.3);
+            color: #2dd4bf;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(45, 212, 191, 0.3);
+        }
+        
+        .section {
+            scroll-margin-top: 80px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                height: 100vh;
+                z-index: 50;
+                transition: left 0.3s ease;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <button id="mobile-menu-btn" class="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-slate-800 border border-slate-700 text-teal-400">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button>
+
+    <div class="flex min-h-screen">
+        <aside id="sidebar" class="sidebar w-64 fixed h-screen overflow-y-auto p-6 z-40">
+            <div class="mb-8">
+                <h2 class="text-xl font-bold gradient-text">GraphKit</h2>
+                <p class="text-xs text-slate-400 mt-1">v1.0.0</p>
+            </div>
+            
+            <nav class="space-y-1">
+                <a href="#introduction" class="nav-item block px-4 py-2 rounded-lg text-sm">Introduction</a>
+                <a href="#features" class="nav-item block px-4 py-2 rounded-lg text-sm">Features</a>
+                <a href="#quick-start" class="nav-item block px-4 py-2 rounded-lg text-sm">Quick Start</a>
+                <a href="#installation" class="nav-item block px-4 py-2 rounded-lg text-sm">Installation</a>
+                <a href="#api-reference" class="nav-item block px-4 py-2 rounded-lg text-sm">API Reference</a>
+                <div class="pl-4 space-y-1 mt-2">
+                    <a href="#graph-construction" class="nav-item block px-4 py-2 rounded-lg text-xs text-slate-400">Graph Construction</a>
+                    <a href="#traversal" class="nav-item block px-4 py-2 rounded-lg text-xs text-slate-400">Traversal</a>
+                    <a href="#shortest-path" class="nav-item block px-4 py-2 rounded-lg text-xs text-slate-400">Shortest Path</a>
+                    <a href="#graph-properties" class="nav-item block px-4 py-2 rounded-lg text-xs text-slate-400">Graph Properties</a>
+                    <a href="#visualization" class="nav-item block px-4 py-2 rounded-lg text-xs text-slate-400">Visualization</a>
+                </div>
+                <a href="#examples" class="nav-item block px-4 py-2 rounded-lg text-sm">Examples</a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 md:ml-64 px-6 md:px-12 py-8 max-w-4xl mx-auto">
+            <section id="introduction" class="section mb-20 pt-8">
+                <div class="text-center mb-12">
+                    <h1 class="text-5xl md:text-7xl font-bold mb-4 gradient-text">GraphKit</h1>
+                    <p class="text-xl md:text-2xl text-slate-300 mb-6">The Modern C++ Graph Library</p>
+                    
+                    <div class="flex flex-wrap justify-center gap-3 mb-8">
+                        <span class="badge">v1.0.0</span>
+                        <span class="badge">C++17</span>
+                        <span class="badge">Header-Only</span>
+                        <span class="badge">MIT License</span>
+                    </div>
+                    
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <a href="#installation" class="btn-primary px-8 py-3 rounded-lg font-semibold inline-block">Get Started</a>
+                        <a href="https://github.com/lakshhttps/GraphKit" class="btn-secondary px-8 py-3 rounded-lg font-semibold inline-block">View on GitHub</a>
+                    </div>
+                </div>
+                
+                <div class="prose prose-invert max-w-none">
+                    <p class="text-lg text-slate-300 leading-relaxed text-center max-w-2xl mx-auto mb-16">
+                        GraphKit is a high-performance, header-only C++17 library designed for graph algorithms and visualization. 
+                        Built for students, researchers, and developers, it provides a simple yet powerful API for working with graphs.
+                    </p>
+                </div>
+            </section>
+
+            <section id="features" class="section mb-20">
+                <h2 class="text-3xl font-bold mb-8 gradient-text">Why GraphKit?</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="card p-6 rounded-xl">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-teal-400">Lightning Fast</h3>
+                        <p class="text-slate-400">Optimized algorithms with modern C++17 features for maximum performance in graph computations.</p>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-indigo-400">Zero Dependencies</h3>
+                        <p class="text-slate-400">Header-only library with no external dependencies. Just include and start coding immediately.</p>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-purple-400">DOT Visualization</h3>
+                        <p class="text-slate-400">Generate DOT format code for creating beautiful graph diagrams with online Graphviz tools.</p>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-pink-400">Generic Design</h3>
+                        <p class="text-slate-400">Template-based architecture supporting any data type as graph nodes with full type safety.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="quick-start" class="section mb-20">
+                <h2 class="text-3xl font-bold mb-8 gradient-text">Quick Start</h2>
+                
+                <div class="code-window relative">
+                    <div class="code-header">
+                        <span class="code-dot bg-red-500"></span>
+                        <span class="code-dot bg-yellow-500"></span>
+                        <span class="code-dot bg-green-500"></span>
+                        <span class="text-xs text-slate-400 ml-2">main.cpp</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre class="!m-0 !rounded-none"><code class="language-cpp">#include "graphkit.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    // Create a directed graph
+    gk::Graph&lt;std::string&gt; g(gk::GraphType::DIRECTED);
+    
+    // Add edges with weights
+    g.addEdge("A", "B", 4);
+    g.addEdge("A", "C", 2);
+    g.addEdge("B", "D", 5);
+    g.addEdge("C", "D", 1);
+    g.addEdge("D", "E", 3);
+    
+    // Find shortest path
+    long long distance = g.getShortestPath("A", "E");
+    std::cout &lt;&lt; "Shortest path from A to E: " &lt;&lt; distance &lt;&lt; std::endl;
+    
+    // Perform BFS traversal
+    auto result = g.bfs("A");
+    std::cout &lt;&lt; "BFS order: ";
+    for (const auto& node : result.order) {
+        std::cout &lt;&lt; node &lt;&lt; " ";
+    }
+    
+    return 0;
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="installation" class="section mb-20">
+                <h2 class="text-3xl font-bold mb-8 gradient-text">Installation</h2>
+                
+                <div class="card p-6 rounded-xl mb-6">
+                    <h3 class="text-xl font-semibold mb-4 text-teal-400">Step 1: Download the Headers</h3>
+                    <p class="text-slate-300 mb-4">GraphKit consists of two header files:</p>
+                    <ul class="list-disc list-inside text-slate-300 mb-4 space-y-2">
+                        <li><code>graphkit.hpp</code> - Core graph algorithms and data structures</li>
+                        <li><code>graph_viz.hpp</code> - Visualization functions (optional, for DOT generation)</li>
+                    </ul>
+                    
+                    <div class="code-window relative">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre class="!m-0"><code class="language-bash"># Download both files
+wget https://raw.githubusercontent.com/yourusername/graphkit/main/graphkit.hpp
+wget https://raw.githubusercontent.com/yourusername/graphkit/main/graph_viz.hpp
+
+# Or clone the entire repository
+git clone https://github.com/yourusername/graphkit.git</code></pre>
+                    </div>
+                </div>
+                
+                <div class="card p-6 rounded-xl">
+                    <h3 class="text-xl font-semibold mb-4 text-teal-400">Step 2: Include in Your Project</h3>
+                    <p class="text-slate-300 mb-4">Add the headers to your C++ source file and compile with C++17 or later.</p>
+                    
+                    <div class="code-window relative">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre class="!m-0"><code class="language-cpp">#include "graphkit.hpp"       // Core library
+#include "graph_viz.hpp"      // For visualization (optional)
+
+// Start using GraphKit!
+gk::Graph&lt;int&gt; g;</code></pre>
+                    </div>
+                    
+                    <p class="text-slate-300 mt-4">Compile your program:</p>
+                    <div class="code-window relative mt-2">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre class="!m-0"><code class="language-bash">g++ -std=c++17 main.cpp -o program
+
+# Or with clang
+clang++ -std=c++17 main.cpp -o program</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="api-reference" class="section mb-20">
+                <h2 class="text-3xl font-bold mb-8 gradient-text">API Reference</h2>
+                
+                <div class="card p-6 rounded-xl mb-8">
+                    <h3 class="text-xl font-semibold mb-3 text-teal-400">Namespace</h3>
+                    <p class="text-slate-300 mb-2">All GraphKit classes and functions are within the <code>gk</code> namespace:</p>
+                    <div class="code-window relative">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre class="!m-0"><code class="language-cpp">using namespace gk;  // Option 1: Use entire namespace
+
+gk::Graph&lt;int&gt; g;    // Option 2: Prefix with gk::</code></pre>
+                    </div>
+                </div>
+                
+                <div id="graph-construction" class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-6 text-teal-400">Graph Construction</h3>
+                    
+                    <div class="card p-6 rounded-xl mb-6">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">Constructor</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">Graph&lt;T&gt;(GraphType gType = GraphType::DIRECTED)</code></pre>
+                        </div>
+                        <p class="text-slate-300 mb-3"><strong>Description:</strong> Creates a new graph with the specified type.</p>
+                        <p class="text-slate-300 mb-3"><strong>Parameters:</strong></p>
+                        <ul class="list-disc list-inside text-slate-300 mb-3 space-y-1">
+                            <li><code>gType</code> - Graph type: <code>GraphType::DIRECTED</code> or <code>GraphType::UNDIRECTED</code> (default: DIRECTED)</li>
+                        </ul>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">// Directed graph
+gk::Graph&lt;int&gt; directedGraph(gk::GraphType::DIRECTED);
+
+// Undirected graph
+gk::Graph&lt;std::string&gt; undirectedGraph(gk::GraphType::UNDIRECTED);</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl mb-6">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">addEdge</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">void addEdge(T u, T v, int w = 1)</code></pre>
+                        </div>
+                        <p class="text-slate-300 mb-3"><strong>Description:</strong> Adds an edge from node u to node v with weight w. For undirected graphs, automatically adds the reverse edge.</p>
+                        <p class="text-slate-300 mb-3"><strong>Parameters:</strong></p>
+                        <ul class="list-disc list-inside text-slate-300 mb-3 space-y-1">
+                            <li><code>u</code> - Source node</li>
+                            <li><code>v</code> - Destination node</li>
+                            <li><code>w</code> - Edge weight (default: 1)</li>
+                        </ul>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">g.addEdge("A", "B", 5);  // Add edge A->B with weight 5
+g.addEdge("B", "C");     // Add edge B->C with default weight 1</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">size</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">std::size_t size() const</code></pre>
+                        </div>
+                        <p class="text-slate-300 mb-3"><strong>Description:</strong> Returns the total number of nodes in the graph.</p>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">std::size_t numNodes = g.size();
+std::cout &lt;&lt; "Graph has " &lt;&lt; numNodes &lt;&lt; " nodes" &lt;&lt; std::endl;</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="traversal" class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-6 text-teal-400">Traversal Algorithms</h3>
+                    
+                    <div class="card p-6 rounded-xl mb-6">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">bfs</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">TraversalResult&lt;T&gt; bfs(T start) const</code></pre>
+                        </div>
+                        <p class="text-slate-300 mb-3"><strong>Description:</strong> Performs Breadth-First Search starting from the given node.</p>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">auto result = g.bfs("A");
+for (const auto& node : result.order) {
+    std::cout &lt;&lt; node &lt;&lt; " ";
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl mb-6">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">dfs</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">TraversalResult&lt;T&gt; dfs(T start) const</code></pre>
+                        </div>
+                        <p class="text-slate-300 mb-3"><strong>Description:</strong> Performs Depth-First Search starting from the given node.</p>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">auto result = g.dfs("A");
+std::cout &lt;&lt; "DFS traversal: ";
+for (const auto& node : result.order) {
+    std::cout &lt;&lt; node &lt;&lt; " ";
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">topologicalSort</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">std::vector&lt;T&gt; topologicalSort() const</code></pre>
+                        </div>
+                        <p class="text-slate-300 mb-3"><strong>Description:</strong> Returns a topological ordering of vertices in a directed acyclic graph (DAG).</p>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">// Course prerequisites example
+g.addEdge("Math101", "Math201");
+g.addEdge("Math201", "Math301");
+auto order = g.topologicalSort();
+// Output: Math101, Math201, Math301</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="shortest-path" class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-6 text-teal-400">Shortest Path Algorithms</h3>
+                    
+                    <div class="card p-6 rounded-xl mb-6">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">getShortestPath</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">long long getShortestPath(T start, T end) const</code></pre>
+                        </div>
+                        <p class="text-slate-300 mb-3"><strong>Description:</strong> Finds the shortest path distance between two nodes.</p>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">long long dist = g.getShortestPath("A", "E");
+if (dist == -1) {
+    std::cout &lt;&lt; "No path exists" &lt;&lt; std::endl;
+} else {
+    std::cout &lt;&lt; "Shortest distance: " &lt;&lt; dist &lt;&lt; std::endl;
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl mb-6">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">getAllPairsShortestPaths</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">std::map&lt;T, std::map&lt;T, long long&gt;&gt; getAllPairsShortestPaths() const</code></pre>
+                        </div>
+                        <p class="text-slate-300 mb-3"><strong>Description:</strong> Computes shortest paths between all pairs of nodes using Floyd-Warshall.</p>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">auto distances = g.getAllPairsShortestPaths();
+std::cout &lt;&lt; "Distance from A to D: " &lt;&lt; distances["A"]["D"] &lt;&lt; std::endl;</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">getMinimumSpanningTree</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">MSTResult&lt;T&gt; getMinimumSpanningTree() const</code></pre>
+                        </div>
+                        <p class="text-slate-300 mb-3"><strong>Description:</strong> Finds the Minimum Spanning Tree using Prim's algorithm.</p>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">auto mst = g.getMinimumSpanningTree();
+std::cout &lt;&lt; "MST total cost: " &lt;&lt; mst.totalCost &lt;&lt; std::endl;
+for (const auto& edge : mst.edges) {
+    std::cout &lt;&lt; edge.first &lt;&lt; " - " &lt;&lt; edge.second &lt;&lt; std::endl;
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="graph-properties" class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-6 text-teal-400">Graph Properties</h3>
+                    
+                    <div class="card p-6 rounded-xl mb-6">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">hasCycle</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">bool hasCycle() const</code></pre>
+                        </div>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">if (g.hasCycle()) {
+    std::cout &lt;&lt; "Graph contains a cycle" &lt;&lt; std::endl;
+} else {
+    std::cout &lt;&lt; "Graph is acyclic" &lt;&lt; std::endl;
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl mb-6">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">countComponents</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">std::size_t countComponents() const</code></pre>
+                        </div>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">std::size_t components = g.countComponents();
+std::cout &lt;&lt; "Graph has " &lt;&lt; components &lt;&lt; " component(s)" &lt;&lt; std::endl;</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl mb-6">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">getNeighbors</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">std::vector&lt;T&gt; getNeighbors(T u) const</code></pre>
+                        </div>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">auto neighbors = g.getNeighbors("A");
+std::cout &lt;&lt; "Neighbors of A: ";
+for (const auto& node : neighbors) {
+    std::cout &lt;&lt; node &lt;&lt; " ";
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl mb-6">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">indegree</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">int indegree(T u) const</code></pre>
+                        </div>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">int inDeg = g.indegree("B");
+std::cout &lt;&lt; "In-degree of B: " &lt;&lt; inDeg &lt;&lt; std::endl;</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">outdegree</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">int outdegree(T u) const</code></pre>
+                        </div>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">int outDeg = g.outdegree("B");
+std::cout &lt;&lt; "Out-degree of B: " &lt;&lt; outDeg &lt;&lt; std::endl;</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="visualization" class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-6 text-teal-400">Visualization Functions</h3>
+                    <p class="text-slate-300 mb-6">GraphKit includes visualization support through DOT format generation. Include <code>graph_viz.hpp</code> to use these functions.</p>
+                    
+                    <div class="card p-6 rounded-xl mb-6">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">printGraph</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">void printGraph(const Graph&lt;T&gt;& g)</code></pre>
+                        </div>
+                        <p class="text-slate-300 mb-3"><strong>Description:</strong> Generates and prints DOT code for visualizing your graph.</p>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">#include "graph_viz.hpp"
+
+gk::Graph&lt;std::string&gt; g(gk::GraphType::DIRECTED);
+g.addEdge("A", "B", 5);
+g.addEdge("B", "C", 3);
+
+gk::printGraph(g);  // Prints DOT code to console</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl">
+                        <h4 class="text-lg font-semibold mb-3 text-indigo-400">printMST</h4>
+                        <div class="code-window relative mb-4">
+                            <pre class="!m-0"><code class="language-cpp">void printMST(const MSTResult&lt;T&gt;& mstResult)</code></pre>
+                        </div>
+                        <p class="text-slate-300 mb-3"><strong>Description:</strong> Generates and prints DOT code for visualizing a Minimum Spanning Tree.</p>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">#include "graph_viz.hpp"
+
+auto mst = g.getMinimumSpanningTree();
+gk::printMST(mst);  // Prints MST DOT code with total cost</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="examples" class="section mb-20">
+                <h2 class="text-3xl font-bold mb-8 gradient-text">Examples</h2>
+                
+                <div class="space-y-8">
+                    <div class="card p-6 rounded-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-indigo-400">Finding Shortest Path</h3>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">gk::Graph&lt;std::string&gt; g(gk::GraphType::DIRECTED);
+
+g.addEdge("NYC", "LA", 2800);
+g.addEdge("NYC", "Chicago", 790);
+g.addEdge("Chicago", "LA", 2015);
+
+long long dist = g.getShortestPath("NYC", "LA");
+std::cout &lt;&lt; "Distance: " &lt;&lt; dist &lt;&lt; " miles" &lt;&lt; std::endl;</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-indigo-400">Detecting Cycles</h3>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">gk::Graph&lt;int&gt; g(gk::GraphType::DIRECTED);
+
+g.addEdge(1, 2);
+g.addEdge(2, 3);
+g.addEdge(3, 1); // Creates a cycle
+
+if (g.hasCycle()) {
+    std::cout &lt;&lt; "Graph contains a cycle!" &lt;&lt; std::endl;
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-indigo-400">Graph Visualization</h3>
+                        <div class="code-window relative">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre class="!m-0"><code class="language-cpp">#include "graphkit.hpp"
+#include "graph_viz.hpp"
+
+gk::Graph&lt;std::string&gt; g(gk::GraphType::UNDIRECTED);
+g.addEdge("A", "B", 2);
+g.addEdge("B", "C", 3);
+g.addEdge("C", "D", 1);
+
+// Print DOT code for visualization
+gk::printGraph(g);
+
+// Visualize MST
+auto mst = g.getMinimumSpanningTree();
+gk::printMST(mst);</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Copy to clipboard function
+        function copyCode(btn) {
+            const pre = btn.nextElementSibling;
+            const code = pre.querySelector('code');
+            const text = code.innerText;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = 'Copied!';
+                btn.classList.add('text-teal-400', 'border-teal-400');
+                
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.classList.remove('text-teal-400', 'border-teal-400');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 768 && 
+                !sidebar.contains(e.target) && 
+                !menuBtn.contains(e.target) && 
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Close sidebar when clicking a link on mobile
+        const navLinks = document.querySelectorAll('.nav-item');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    sidebar.classList.remove('open');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
