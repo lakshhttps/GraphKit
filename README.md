@@ -18,7 +18,7 @@ It is designed for clarity, performance, and ease of use, making it suitable for
 
 ### Clone the repository:
 ```
-git clone https://github.com/your-username/GraphKit.git
+git clone https://github.com/lakshhttps/GraphKit
 ```
 
 ### Include the headers in your project:
@@ -32,7 +32,7 @@ git clone https://github.com/your-username/GraphKit.git
 #include "graphkit/graph.hpp"
 
 int main() {
-    Graph g(5);
+    gk::Graph<int> g(gk::GraphType::DIRECTED);
     g.addEdge(0, 1);
     g.addEdge(1, 2);
 
